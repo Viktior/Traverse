@@ -50,10 +50,10 @@ public class CommandFindTest extends CommandBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         Biome biome = null;
-        for (Biome b : TraverseWorld.biomeList.keySet()) {
-            String name = b.getBiomeName().replaceAll(" ", "_").toLowerCase();
+        for (TraverseWorld.TraverseBiomeEntry b : TraverseWorld.biomeList) {
+            String name = b.biome.getBiomeName().replaceAll(" ", "_").toLowerCase();
             if (args[0].equalsIgnoreCase(name)) {
-                biome = b;
+                biome = b.biome;
             }
         }
         if (biome == null) {

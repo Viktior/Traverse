@@ -1,25 +1,27 @@
 package prospector.traverse.world;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeForest;
-import net.minecraft.world.biome.BiomeProvider;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeManager;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import prospector.shootingstar.version.Version;
-import prospector.shootingstar.version.VersionUtils;
 import prospector.traverse.config.TraverseConfig;
 import prospector.traverse.core.TraverseConstants;
 import prospector.traverse.world.biomes.*;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
 
 public class TraverseWorld {
 
-    public static LinkedHashMap<Biome, Version> biomeList = new LinkedHashMap<>();
+    public static List<TraverseBiomeEntry> biomeList = new ArrayList<>();
     public static Biome autumnalWoodsBiome = new BiomeAutumnalWoods();
     public static Biome woodlandsBiome = new BiomeWoodlands();
     public static Biome miniJungleBiome = new BiomeMiniJungle();
@@ -33,6 +35,7 @@ public class TraverseWorld {
     public static Biome forestedHills = new BiomeForestedHills(BiomeForest.Type.NORMAL, "Forested Hills");
     public static Biome birchForestedHills = new BiomeForestedHills(BiomeForest.Type.BIRCH, "Birch Forested Hills");
     public static Biome autumnalWoodedHills = new BiomeAutumnalWoodedHills();
+    public static boolean firstTick = true;
 
     public static void init() {
         register(new Version(1, 0, 0), autumnalWoodsBiome, BiomeManager.BiomeType.COOL, "autumnal_woods", 8, TraverseConfig.disableAutumnalWoods, FOREST);
@@ -52,24 +55,51 @@ public class TraverseWorld {
 
     public static void register(Version versionAdded, Biome biome, BiomeManager.BiomeType type, String name, int weight, boolean disabled, BiomeDictionary.Type... biomeDictTypes) {
         if (!disabled) {
-            boolean canRegister;
-            if (!TraverseConfig.registerBiomesRegardless) {
-                TraverseConfig.reloadVersionConfig();
-                canRegister = VersionUtils.isVersionLessOrEqual(versionAdded, TraverseConfig.version);
-            } else {
-                canRegister = true;
+            // canRegister = VersionUtils.isVersionLessOrEqual(versionAdded, TraverseConfig.version);
+            biome.setRegistryName(new ResourceLocation(TraverseConstants.MOD_ID, name));
+            GameRegistry.register(biome);
+            for (BiomeDictionary.Type biomeDictType : biomeDictTypes) {
+                BiomeDictionary.addTypes(biome, biomeDictType);
             }
-            if (canRegister) {
-                biome.setRegistryName(new ResourceLocation(TraverseConstants.MOD_ID, name));
-                GameRegistry.register(biome);
-                BiomeManager.addBiome(type, new BiomeManager.BiomeEntry(biome, weight));
-                BiomeManager.addSpawnBiome(biome);
-                BiomeProvider.allowedBiomes.add(biome);
-                for (BiomeDictionary.Type biomeDictType : biomeDictTypes) {
-                    BiomeDictionary.addTypes(biome, biomeDictType);
-                }
-                biomeList.put(biome, versionAdded);
+            biomeList.add(new TraverseBiomeEntry(versionAdded, biome, type, name, weight, biomeDictTypes));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onWorldLoad(WorldEvent.Load event) {
+        if (event.getWorld().provider.getDimensionType() == DimensionType.OVERWORLD) {
+            for (TraverseBiomeEntry entry : biomeList) {
+                BiomeManager.addBiome(entry.type, new BiomeManager.BiomeEntry(entry.biome, entry.weight));
+                BiomeManager.addSpawnBiome(entry.biome);
+                System.out.println("Adding " + entry.name);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onWorldUnoad(WorldEvent.Unload event) {
+        for (TraverseBiomeEntry entry : biomeList) {
+            BiomeManager.removeBiome(entry.type, new BiomeManager.BiomeEntry(entry.biome, entry.weight));
+            BiomeManager.removeSpawnBiome(entry.biome);
+            System.out.println("Removing " + entry.name);
+        }
+    }
+
+    public static class TraverseBiomeEntry {
+        public Version version;
+        public Biome biome;
+        public BiomeManager.BiomeType type;
+        public String name;
+        public int weight;
+        public BiomeDictionary.Type[] biomeDictTypes;
+
+        public TraverseBiomeEntry(Version version, Biome biome, BiomeManager.BiomeType type, String name, int weight, BiomeDictionary.Type... biomeDictTypes) {
+            this.version = version;
+            this.biome = biome;
+            this.type = type;
+            this.name = name;
+            this.weight = weight;
+            this.biomeDictTypes = biomeDictTypes;
         }
     }
 }
