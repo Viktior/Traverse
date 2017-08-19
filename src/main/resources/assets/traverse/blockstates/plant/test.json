@@ -1,0 +1,29 @@
+{
+	"data": [
+		{
+			"name": "aa", "members": [
+			{
+				"name": "a", "desc": "(Ljava/util/Map;)Z", "acc": "PUBLIC"
+			}, {
+				"name": "a", "desc": "(Lcom/google/gson/JsonElement;)Laa;", "acc": "PUBLIC"
+			}, {
+				"name": "b", "desc": "(Lcom/google/gson/JsonElement;)[Laa;", "acc": "PUBLIC"
+			}, {
+				"name": "a", "acc": "PUBLIC"
+			}, {
+				"name": "b", "acc": "PRIVATE"
+			}, {
+				"name": "c", "acc": "PRIVATE"
+			}
+		]
+		}, {
+			"name": "aaa", "members": [
+				{
+					"name": "a", "desc": "()Z", "acc": "PUBLIC"
+				}, {
+					"name": "a", "desc": "(Lnet/minecraft/entity/parts/EntityPart;Lnet/minecraft/entity/damage/DamageSource;F)F", "acc": "PUBLIC"
+				}
+			]
+		}
+	]
+}

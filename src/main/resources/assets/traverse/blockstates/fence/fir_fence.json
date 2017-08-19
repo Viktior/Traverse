@@ -11,19 +11,19 @@
 		"inventory": { "model": "fence_inventory" },
 		"east": {
 			"true": { "submodel": "fence_side", "y": 90 },
-			"false": {}
+			"false": { }
 		},
 		"north": {
 			"true": { "submodel": "fence_side", "y": 0 },
-			"false": {}
+			"false": { }
 		},
 		"south": {
 			"true": { "submodel": "fence_side", "y": 180 },
-			"false": {}
+			"false": { }
 		},
 		"west": {
 			"true": { "submodel": "fence_side", "y": 270 },
-			"false": {}
+			"false": { }
 		}
 	}
 }

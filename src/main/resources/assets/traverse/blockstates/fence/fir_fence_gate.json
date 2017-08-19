@@ -8,7 +8,7 @@
 		}
 	},
 	"variants": {
-		"inventory": [{}],
+		"inventory": [ { } ],
 		"facing": {
 			"south": { "y": 0 },
 			"west": { "y": 90 },

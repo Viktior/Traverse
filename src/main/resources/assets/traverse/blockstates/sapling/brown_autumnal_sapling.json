@@ -9,6 +9,6 @@
 	},
 	"variants": {
 		"inventory": { "model": "traverse:itemblock" },
-		"normal": [{}]
+		"normal": [ { } ]
 	}
 }

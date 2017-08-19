@@ -5,7 +5,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSlab;
-import net.minecraft.util.ResourceLocation;
 import prospector.shootingstar.BlockCompound;
 import prospector.shootingstar.ShootingStar;
 import prospector.traverse.blocks.AutumnalLSCompound;
@@ -29,7 +28,7 @@ public class TraverseBlocks {
         addAutumnTreeStuff("orange");
         addAutumnTreeStuff("yellow");
         addFirTreeStuff();
-        addStone("red_rock", true, true, true);
+        register(new BlockTraverseMeta("red_rock", Material.ROCK, SoundType.STONE, "stone", "bricks", "chiselled"));
         register(new BlockTraverseDeadGrass());
     }
 
@@ -94,11 +93,10 @@ public class TraverseBlocks {
         String cobbleName = name + "_cobblestone";
         BlockTraverse stone;
         if (hasCobblestone)
-            stone = new BlockTraverse(name, Material.ROCK, SoundType.STONE, new ResourceLocation("traverse", cobbleName));
+            stone = new BlockTraverse(name, Material.ROCK, SoundType.STONE);
         else
             stone = new BlockTraverse(name, Material.ROCK, SoundType.STONE);
         register(stone);
-        oreDictNames.put("stone", stone);
 
         if (hasBricks) {
             BlockTraverse bricks = new BlockTraverse(name + "_bricks", Material.ROCK, SoundType.STONE);
